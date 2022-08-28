@@ -85,6 +85,9 @@ const ObsEditProvider = ( { children }: Props ): Node => {
     const openSavedObservation = async savedUUID => {
       const realm = await Realm.open( realmConfig );
       const obs = realm.objectForPrimaryKey( "Observation", savedUUID );
+      if ( !obs ) {
+        return obs;
+      }
       const plainObject = obs.toJSON( );
       setObservations( [plainObject] );
       return obs;

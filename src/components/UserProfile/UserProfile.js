@@ -37,9 +37,13 @@ const UserProfile = ( ): React.Node => {
 
   const followUser = ( ) => updateRelationship( { id: userId, relationship: { following: true } } );
 
+  const handle = User.userHandle( user );
+
+  if ( !handle ) { return null; }
+
   return (
     <ViewWithFooter>
-      <CustomHeader headerText={User.userHandle( user )} />
+      <CustomHeader headerText={handle} />
       <View style={viewStyles.row} testID={`UserProfile.${userId}`}>
         <UserIcon uri={User.uri( user )} large />
         <View>

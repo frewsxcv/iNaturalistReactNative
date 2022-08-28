@@ -12,6 +12,7 @@ import Realm from "realm";
 
 // eslint-disable-next-line import/no-cycle
 import realmConfig from "../../models/index";
+import type User from "../../models/User";
 
 // Base API domain can be overridden (in case we want to use staging URL) -
 // either by placing it in .env file, or in an environment variable.
@@ -260,7 +261,7 @@ const authenticateUser = async (
   const currentUser = { id: userId, login: remoteUsername, signedIn: true };
   const realm = await Realm.open( realmConfig );
   realm.write( ( ) => {
-    realm?.create( "User", currentUser, "modified" );
+    realm?.create<User>( "User", currentUser, "modified" );
   } );
   realm.close( );
 
@@ -283,7 +284,7 @@ const registerUser = async (
   username: string,
   password: string,
   license: void | string
-): any => {
+): void | string => {
   const formData = new FormData();
   formData.append( "username", username );
   formData.append( "user[email]", email );
@@ -325,22 +326,17 @@ const getUsername = async (): Promise<string> => RNSInfo.getItem( "username", {}
 
 /**
  * Returns the logged-in user
- *
- * @returns {Promise<boolean>}
  */
-const getUser = async (): Promise<Object | null> => {
+const getUser = async (): Promise<User | void> => {
   const realm = await Realm.open( realmConfig );
-  return realm.objects( "User" ).filtered( "signedIn == true" )[0];
+  return realm.objects<User>( "User" ).filtered( "signedIn == true" )[0];
 };
 
 /**
  * Returns the logged-in userId
- *
- * @returns {Promise<boolean>}
  */
-const getUserId = async (): Promise<string | null> => {
-  const realm = await Realm.open( realmConfig );
-  const currentUser = realm.objects( "User" ).filtered( "signedIn == true" )[0];
+const getUserId = async (): Promise<string | void> => {
+  const currentUser = await getUser();
   const currentUserId = currentUser?.id?.toString( );
   // TODO: still need to figure out the right way/time to close realm but
   // omitting for now bc it interferes with a user being able to save a local
