@@ -2,6 +2,7 @@
 
 const fsp = require( "fs/promises" );
 const path = require( "path" );
+const { glob } = require( "glob" );
 
 const SUPPORTED_APP_STORE_LOCALES = [
   "ar-SA",
@@ -320,8 +321,47 @@ async function copyAndroidTitle( options = {} ) {
   );
 }
 
+async function validateMetadata( characterLengthLimits, options = {} ) {
+  // Chalk does not expose a CommonJS module, so we have to do this
+  const { default: chalk } = await import( "chalk" );
+  const errors = [];
+  await Promise.all(
+    Object.keys( characterLengthLimits ).map( async globPath => {
+      const limit = characterLengthLimits[globPath];
+      const filePaths = await glob( globPath, {
+        cwd: path.join( __dirname, "..", "..", ".." )
+      } );
+      await Promise.all(
+        filePaths.map( async filePath => {
+          const content = await fsp.readFile( filePath, "utf8" );
+          if ( content.length > limit ) {
+            errors.push(
+              `${filePath} is ${content.length} characters long, but the limit is ${limit}`
+            );
+          }
+        } )
+      );
+    } )
+  );
+  if ( errors.length > 0 ) {
+    console.error( chalk.red( `❌ ${errors.length} errors found in Fastlane metadata:` ) );
+    errors.forEach( error => {
+      console.error( chalk.red( "[Error]" ), error );
+    } );
+    if ( options.noExit ) {
+      return false;
+    }
+    process.exit( 1 );
+  }
+  if ( !options.quiet ) {
+    console.log( "✅ Fastlane metadata validated" );
+  }
+  return true;
+}
+
 module.exports = {
   copyAndroidTitle,
   removeUnsupportedDirectories,
-  renameDirectories
+  renameDirectories,
+  validateMetadata
 };

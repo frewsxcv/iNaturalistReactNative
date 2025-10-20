@@ -16,7 +16,8 @@ const {
 const {
   copyAndroidTitle,
   removeUnsupportedDirectories,
-  renameDirectories
+  renameDirectories,
+  validateMetadata
 } = require( "./i18ncli/fastlane" );
 
 // Mapping of globs to character length limits for Fastlane metadata files.
@@ -96,8 +97,9 @@ yargs
     "validate",
     "Validate source strings",
     ( ) => undefined,
-    _argv => {
-      validate( );
+    async _argv => {
+      await validate( );
+      await validateMetadata( characterLengthLimits );
     }
   )
   .command(
