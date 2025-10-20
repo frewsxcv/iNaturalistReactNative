@@ -1,3 +1,3 @@
-const permissions = require( "react-native-permissions/mock" );
+import permissions from "react-native-permissions/mock";
 
-module.exports = permissions;
+export default permissions;

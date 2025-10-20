@@ -101,4 +101,4 @@ class RNSInfo {
   static isSensorAvailable = jest.fn( async () => "Face ID" );
 }
 
-module.exports = RNSInfo;
+export default RNSInfo;

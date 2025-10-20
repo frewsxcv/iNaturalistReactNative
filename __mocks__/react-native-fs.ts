@@ -1,6 +1,6 @@
-const mockFs = require( "fs" );
+import mockFs from "fs";
 
-module.exports = {
+export default {
   appendFile: jest.fn( ),
   CachesDirectoryPath: "caches/directory/path",
   DocumentDirectoryPath: "document/directory/path",
