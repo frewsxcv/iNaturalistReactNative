@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   maxWorkers: 1,
   testTimeout: 900000,
   rootDir: "..",

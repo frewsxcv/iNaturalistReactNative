@@ -1,31 +1,33 @@
 /* eslint no-console: 0 */
 
-const fs = require( "fs" );
-const path = require( "path" );
-const yargs = require( "yargs" );
+import fs from "fs";
+import path from "path";
+import yargs from "yargs";
 
-const {
-  jsonifyLocalizations,
-  supportedLocales,
-  normalizeFileNames,
-  validate,
-  normalize,
-  untranslatable,
-  unused
-} = require( "./i18ncli/ftl" );
-const {
+import {
   copyAndroidTitle,
   removeUnsupportedDirectories,
   renameDirectories
-} = require( "./i18ncli/fastlane" );
+// eslint-disable-next-line import/extensions
+} from "./i18ncli/fastlane.js";
+import {
+  jsonifyLocalizations,
+  normalize,
+  normalizeFileNames,
+  supportedLocales,
+  untranslatable,
+  unused,
+  validate
+// eslint-disable-next-line import/extensions
+} from "./i18ncli/ftl.js";
 
 // Write loadTranslations.js, a file with a function that statically loads
 // translation files given a locale
 const writeLoadTranslations = async ( ) => {
   const locales = await supportedLocales( );
-  const outPath = path.join( __dirname, "loadTranslations.js" );
+  const outPath = path.join( import.meta.dirname, "loadTranslations.js" );
   const out = fs.createWriteStream( outPath );
-  const commentPathPieces = __filename.split( path.sep );
+  const commentPathPieces = import.meta.filename.split( path.sep );
   const commentPath = path.join(
     ...commentPathPieces.slice( commentPathPieces.indexOf( "src" ), commentPathPieces.length )
   );
@@ -45,7 +47,7 @@ const writeLoadTranslations = async ( ) => {
 };
 
 // eslint-disable-next-line no-unused-expressions, @typescript-eslint/no-unused-expressions
-yargs
+yargs( process.argv.slice( 2 ) )
   .usage( "Usage: $0 <cmd> [args]" )
   .option( "verbose", {
     alias: "v",
