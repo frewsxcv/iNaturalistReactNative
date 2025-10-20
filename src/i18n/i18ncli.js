@@ -19,6 +19,20 @@ const {
   renameDirectories
 } = require( "./i18ncli/fastlane" );
 
+// Mapping of globs to character length limits for Fastlane metadata files.
+//
+// For more information about why this exists, see:
+// https://github.com/inaturalist/iNaturalistReactNative/issues/2523
+const characterLengthLimits = {
+  "fastlane/metadata/android/**/title.txt": 30,
+  "fastlane/metadata/android/**/full_description.txt": 4000,
+  "fastlane/metadata/android/**/short_description.txt": 80,
+  "fastlane/metadata/ios/**/promotional_text.txt": 170,
+  "fastlane/metadata/ios/**/keywords.txt": 100,
+  "fastlane/metadata/ios/**/description.txt": 4000,
+  "fastlane/metadata/ios/**/subtitle.txt": 30
+};
+
 // Write loadTranslations.js, a file with a function that statically loads
 // translation files given a locale
 const writeLoadTranslations = async ( ) => {
