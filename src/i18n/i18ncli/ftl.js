@@ -5,6 +5,7 @@ import {
   Resource,
   serialize as serializeFtl
 } from "@fluent/syntax";
+import chalk from "chalk";
 import { format, parseISO } from "date-fns";
 import { enUS } from "date-fns/locale/en-US";
 import fluent from "fluent_conv";
@@ -178,8 +179,6 @@ async function validateFtlFile( ftlPath, options = {} ) {
   const ftlTxt = await fsp.readFile( ftlPath );
   const ftl = parseFtl( ftlTxt.toString( ) );
   const errors = [];
-  // Chalk does not expose a CommonJS module, so we have to do this
-  const { default: chalk } = await import( "chalk" );
   const keys = {};
   ftl.body.forEach( item => {
     if ( item.type === "GroupComment" ) {
